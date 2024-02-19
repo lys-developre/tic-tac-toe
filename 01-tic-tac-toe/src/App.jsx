@@ -26,7 +26,7 @@ function App() {
 
   //guardamos en local storage el turno.
   const [turn, setTurn] = useState(()=>{
-    const turnFromLocalStorage = window.localStorage.getItem('turn')
+    const turnFromLocalStorage = window.localStorage.getItem('newTurn')
     return turnFromLocalStorage ?? TURNS.X
   });
 
@@ -43,6 +43,10 @@ function App() {
     setBoard(Array(9).fill(null));
     setTurn(TURNS.X)
     setWinner(null);
+
+    //cuando reseteamos el juego tambien borramos el local storage 
+    window.localStorage.removeItem('board');
+    window.localStorage.removeItem('turn');
   }
 
   //CHEQUEAR EMPATE-----------------------------------------------
