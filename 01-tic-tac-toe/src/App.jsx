@@ -4,33 +4,38 @@ import { useState } from "react";
 import confetti from "canvas-confetti"
 
 import { Square } from "./components/Square";
-import{TURNS} from "./constants.jsx";
-import {checkWinner} from "./logic/board.jsx"
+import { TURNS } from "./constants.jsx";
+import { checkWinner } from "./logic/board.jsx"
 
 
 
 //NUESTRA APP
 
 function App() {
- 
+
 
 
   //ESTADOS: primera posicion valor de el estado segunda posicion como actualizar el estado.
   //estado inicial board:
-  const [board, setBoard] = useState(()=>{
-    const boardFromStorage = window.localStorage.getItem('board')
-    return boardFromStorage? JSON.parse(boardFromStorage): Array(9).fill(null) 
-  } );
 
-  //estado inicial turn:
-  const [turn, setTurn] = useState(TURNS.X);
+  //guardamos en local storage el tablero.
+  const [board, setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem('board')
+    return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(null)
+  });
+
+  //guardamos en local storage el turno.
+  const [turn, setTurn] = useState(()=>{
+    const turnFromLocalStorage = window.localStorage.getItem('turn')
+    return turnFromLocalStorage ?? TURNS.X
+  });
 
   //estado nicial para comprovar el ganador.
   const [winner, setWinner] = useState(null);//null no hay ganador false hay empate 
 
 
   //COMPROBAR GANADOR-------------------------------------------- 
-  
+
 
   //RESETEAR EL JUEGO--------------------------------------------
   //cuando reseteamos el juego nos teneos que asgurar que estamos seteando a los valores iniciales de los estados
@@ -91,68 +96,68 @@ function App() {
 
 
 
-//RENDERIZADO:
-return (
-  <>
-    <main className="board">
-      <h1>tic tac toe</h1>
-      <button onClick={resetGame}>Resetetear el juego</button>
-      <secction className="game">
+  //RENDERIZADO:
+  return (
+    <>
+      <main className="board">
+        <h1>tic tac toe</h1>
+        <button onClick={resetGame}>Resetetear el juego</button>
+        <secction className="game">
+          {
+            board.map((square, index) => {
+              return (
+
+                <Square
+                  key={index}
+                  index={index}
+                  updateBoard={updateBoard}
+
+                >
+
+                  {square}
+
+                </Square>
+
+              )
+            })
+          }
+        </secction>
+        <section className="turn">
+          <Square isSelected={turn === TURNS.X}>
+            {TURNS.X}
+          </Square>
+          <Square isSelected={turn === TURNS.O}>
+            {TURNS.O}
+          </Square>
+        </section>
         {
-          board.map((square, index) => {
-            return (
+          winner !== null && (
+            <section className="winner">
+              <div className="texto">
+                <h2>
+                  {
+                    winner === false ? 'Empate' : 'Ganador'
+                  }
+                </h2>
 
-              <Square
-                key={index}
-                index={index}
-                updateBoard={updateBoard}
+                <header className="win">
+                  {
+                    winner && <Square>
+                      {winner}
+                    </Square>
+                  }
+                </header>
+                <button onClick={resetGame}>Eempezar de nuevo</button>
+                <footer>
 
-              >
-
-                {square}
-
-              </Square>
-
-            )
-          })
+                </footer>
+              </div>
+            </section>
+          )
         }
-      </secction>
-      <section className="turn">
-        <Square isSelected={turn === TURNS.X}>
-          {TURNS.X}
-        </Square>
-        <Square isSelected={turn === TURNS.O}>
-          {TURNS.O}
-        </Square>
-      </section>
-      {
-        winner !== null && (
-          <section className="winner">
-            <div className="texto">
-              <h2>
-                {
-                  winner === false ? 'Empate' : 'Ganador'
-                }
-              </h2>
-
-              <header className="win">
-                {
-                  winner && <Square>
-                    {winner}
-                  </Square>
-                }
-              </header>
-              <button onClick={resetGame}>Eempezar de nuevo</button>
-              <footer>
-
-              </footer>
-            </div>
-          </section>
-        )
-      }
-    </main>
-  </>
-)
+      </main>
+    </>
+  )
 }
 
 export default App
