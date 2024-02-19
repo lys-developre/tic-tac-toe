@@ -1,8 +1,19 @@
-# React + Vite
+El código se compone de tres componentes principales: Square, App y WINNER_COMBOS. Cada uno tiene una función específica en el juego:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Square es el componente que representa cada cuadrado del tablero. Recibe cuatro props: children, isSelected, updateBoard e index. children es el contenido del cuadrado, que puede ser null, x o o. isSelected es un booleano que indica si el cuadrado está seleccionado o no. updateBoard es una función que se pasa desde el componente App y que se encarga de actualizar el estado del tablero y del turno cuando se hace clic en el cuadrado. index es el índice del cuadrado en el array del tablero, que se usa como clave al renderizar.
+App es el componente principal que contiene la lógica del juego. Tiene tres estados: board, turn y winner. board es un array de 9 elementos que representa el estado del tablero. Cada elemento puede ser null, x o o. turn es una variable que indica el turno actual, que puede ser x o o. winner es una variable que indica el ganador del juego, que puede ser null, false, x o o. null significa que no hay ganador, false significa que hay un empate, y x o o significa que ese jugador ha ganado.
+WINNER_COMBOS es una constante que contiene un array de arrays con las posibles combinaciones ganadoras. Cada subarray tiene tres números que corresponden a los índices del tablero que forman una línea horizontal, vertical o diagonal.
+El flujo de ejecución es el siguiente:
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Al iniciar el juego, se renderiza el componente App con los estados iniciales: board es un array de 9 elementos null, turn es x y winner es null.
+Dentro del componente App, se renderiza un botón para resetear el juego, que llama a la función resetGame cuando se hace clic, y una sección con el juego, que mapea el array board y renderiza un componente Square por cada elemento, pasándole como props el elemento, el índice, la función updateBoard y un booleano que indica si el elemento es igual al turno actual.
+Cuando el usuario hace clic en un cuadrado vacío, se llama a la función updateBoard con el índice del cuadrado como argumento. Esta función hace lo siguiente:
+Comprueba si el cuadrado está vacío y si no hay ganador. Si no se cumple alguna de estas condiciones, no hace nada y retorna.
+Crea una copia del array board y le asigna el valor del turno actual al elemento correspondiente al índice del cuadrado.
+Actualiza el estado board con la copia modificada.
+Cambia el valor del turno actual al opuesto, es decir, si era x lo cambia a o y viceversa, y actualiza el estado turn con el nuevo valor.
+Llama a la función checkWinner con la copia del array board como argumento. Esta función recorre el array WINNER_COMBOS y comprueba si alguno de sus subarrays tiene los mismos valores que el array board en los índices correspondientes. Si encuentra una coincidencia, retorna el valor de ese subarray, que será x o o. Si no encuentra ninguna coincidencia, retorna null.
+Si la función checkWinner retorna un valor distinto de null, significa que hay un ganador. Entonces, llama a la función confetti, que muestra una animación de confeti en la pantalla, y actualiza el estado winner con el valor retornado por checkWinner.
+Si la función checkWinner retorna null, significa que no hay un ganador. Entonces, llama a la función checkEndGame con la copia del array board como argumento. Esta función comprueba si todos los elementos del array son distintos de null, lo que significa que el tablero está lleno y hay un empate. Si es así, actualiza el estado winner con el valor false.
+Cuando el estado board, turn o winner cambia, se vuelve a renderizar el componente App con los nuevos valores, mostrando el estado actual del juego al usuario.
+Cuando el usuario quiere empezar un nuevo juego, puede hacer clic en el botón de resetear el juego, que llama a la función resetGame. Esta función restaura los estados board, turn y winner a sus valores iniciales, borrando el tablero y reiniciando el turno y el ganador.

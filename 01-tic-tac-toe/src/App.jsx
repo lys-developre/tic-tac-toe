@@ -1,56 +1,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import confetti from "canvas-confetti"
+
+import { Square } from "./components/Square";
+import{TURNS} from "./constants.jsx";
+import {checkWinner} from "./logic/board.jsx"
 
 
 
-//----------------------------------------------------------------
-
-//CONSTANTES:
-//constante que contiene los turnos de el juego
-const TURNS = {
-  X: 'x',
-  O: 'o'
-}
-
-
-//----------------------------------------------------------------
-
-//COMPONENTE SQUARE
-//creamos el componente square que es cada cuadradito de el juego
-//children es el contenido de cada cuadradito inicia en null pero lo vamos a ir cambiando por x o por o.
-//updateBoard lo usaremos para cuando hagamos click actualizar el cuadradito con una x o una o.
-//index lo usaremos como key al momento de renderizar.
-const Square = ({ children, isSelected, updateBoard, index }) => {
-
-  const className = ` square ${isSelected ? 'is-selected' : ''} `
-
-  //manejamos el click :
-  const handleClick = () => {
-    updateBoard(index);
-  }
-
-  return (
-
-    <div onClick={handleClick} className={className} >
-      {children}
-    </div>
-  )
-}
-
-const WINNER_COMBOS = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6]
-];
-
-
-//----------------------------------------------------------------
 //NUESTRA APP
 
 function App() {
@@ -68,21 +26,7 @@ function App() {
 
 
   //COMPROBAR GANADOR-------------------------------------------- 
-  const checkWinner = (boardToCheck) => {
-    for (const combo of WINNER_COMBOS) {
-      const [a, b, c] = combo
-
-      if (
-        boardToCheck[a] &&
-        boardToCheck[a] === boardToCheck[b] &&
-        boardToCheck[b] === boardToCheck[c]
-      ) {
-        return boardToCheck[a]
-      }
-    }
-    //si no hay ganador.
-    return null
-  }
+  
 
   //RESETEAR EL JUEGO--------------------------------------------
   //cuando reseteamos el juego nos teneos que asgurar que estamos seteando a los valores iniciales de los estados
@@ -123,6 +67,7 @@ function App() {
     //verificamos si hay un ganador con la funcion que creamos para eso.
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
+      confetti();
       //aqui le decimos que hacer cuando checkWinner encuentre un ganador, este ganador se encuentra en la constante newWinner.
       setWinner(newWinner);
     } else if (checkEndGame(newBoard)) {
@@ -146,7 +91,7 @@ return (
       <button onClick={resetGame}>Resetetear el juego</button>
       <secction className="game">
         {
-          board.map((_, index) => {
+          board.map((square, index) => {
             return (
 
               <Square
@@ -156,7 +101,7 @@ return (
 
               >
 
-                {board[index]}
+                {square}
 
               </Square>
 
