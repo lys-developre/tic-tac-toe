@@ -12,11 +12,15 @@ import {checkWinner} from "./logic/board.jsx"
 //NUESTRA APP
 
 function App() {
+ 
+
 
   //ESTADOS: primera posicion valor de el estado segunda posicion como actualizar el estado.
-
   //estado inicial board:
-  const [board, setBoard] = useState(Array(9).fill(null));
+  const [board, setBoard] = useState(()=>{
+    const boardFromStorage = window.localStorage.getItem('board')
+    return boardFromStorage? JSON.parse(boardFromStorage): Array(9).fill(null) 
+  } );
 
   //estado inicial turn:
   const [turn, setTurn] = useState(TURNS.X);
@@ -63,6 +67,10 @@ function App() {
     //si turno esta en x pasa a o y viceversa , y actualizamos el turno (setTurn) con ese resultado (newTurn).
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
+
+    //guardamos partida en local storage
+    window.localStorage.setItem('board', JSON.stringify(newBoard))
+    window.localStorage.setItem('turn', turn)
 
     //verificamos si hay un ganador con la funcion que creamos para eso.
     const newWinner = checkWinner(newBoard)
