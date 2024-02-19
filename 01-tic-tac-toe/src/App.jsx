@@ -67,16 +67,16 @@ function App() {
   const [winner, setWinner] = useState(null);//null no hay ganador false hay empate 
 
 
-  //comprobamos quien es el ganador 
-  const checkWinner = (boardToCheck) =>{
-    for(const combo of WINNER_COMBOS){
+  //COMPROBAR GANADOR-------------------------------------------- 
+  const checkWinner = (boardToCheck) => {
+    for (const combo of WINNER_COMBOS) {
       const [a, b, c] = combo
 
-      if(
-        boardToCheck[a] && 
+      if (
+        boardToCheck[a] &&
         boardToCheck[a] === boardToCheck[b] &&
-        boardToCheck[b] === boardToCheck[c]         
-      ){
+        boardToCheck[b] === boardToCheck[c]
+      ) {
         return boardToCheck[a]
       }
     }
@@ -84,6 +84,19 @@ function App() {
     return null
   }
 
+  //RESETEAR EL JUEGO--------------------------------------------
+  //cuando reseteamos el juego nos teneos que asgurar que estamos seteando a los valores iniciales de los estados
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setTurn(TURNS.X)
+    setWinner(null);
+  }
+
+  //CHEQUEAR EMPATE-----------------------------------------------
+  const checkEndGame = (newBoard) => {
+    //si todos los square son diferentes a null el juego termino y hay un empate.
+    return newBoard.every((square) => square !== null)
+  };
 
 
 
@@ -109,56 +122,84 @@ function App() {
 
     //verificamos si hay un ganador con la funcion que creamos para eso.
     const newWinner = checkWinner(newBoard)
-    if (newWinner){
+    if (newWinner) {
       //aqui le decimos que hacer cuando checkWinner encuentre un ganador, este ganador se encuentra en la constante newWinner.
-      
       setWinner(newWinner);
-
-
+    } else if (checkEndGame(newBoard)) {
+      setWinner(false);// es un empate.
     }
-
   }
 
 
 
 
 
-  //RENDERIZADO:
-  return (
-    <>
-      <main className="board">
-        <h1>tic tac toe</h1>
-        <secction className="game">
-          {
-            board.map((_, index) => {
-              return (
 
-                <Square
-                  key={index}
-                  index={index}
-                  updateBoard={updateBoard}
 
-                >
 
-                  {board[index]}
 
-                </Square>
+//RENDERIZADO:
+return (
+  <>
+    <main className="board">
+      <h1>tic tac toe</h1>
+      <button onClick={resetGame}>Resetetear el juego</button>
+      <secction className="game">
+        {
+          board.map((_, index) => {
+            return (
 
-              )
-            })
-          }
-        </secction>
-        <section className="turn">
-          <Square isSelected={turn === TURNS.X}>
-            {TURNS.X}
-          </Square>
-          <Square isSelected={turn === TURNS.O}>
-            {TURNS.O}
-          </Square>
-        </section>
-      </main>
-    </>
-  )
+              <Square
+                key={index}
+                index={index}
+                updateBoard={updateBoard}
+
+              >
+
+                {board[index]}
+
+              </Square>
+
+            )
+          })
+        }
+      </secction>
+      <section className="turn">
+        <Square isSelected={turn === TURNS.X}>
+          {TURNS.X}
+        </Square>
+        <Square isSelected={turn === TURNS.O}>
+          {TURNS.O}
+        </Square>
+      </section>
+      {
+        winner !== null && (
+          <section className="winner">
+            <div className="texto">
+              <h2>
+                {
+                  winner === false ? 'Empate' : 'Ganador'
+                }
+              </h2>
+
+              <header className="win">
+                {
+                  winner && <Square>
+                    {winner}
+                  </Square>
+                }
+              </header>
+              <button onClick={resetGame}>Eempezar de nuevo</button>
+              <footer>
+
+              </footer>
+            </div>
+          </section>
+        )
+      }
+    </main>
+  </>
+)
 }
 
 export default App
